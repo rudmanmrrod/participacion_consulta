@@ -1,0 +1,123 @@
+{% extends 'consulta.base.html' %}
+{% load staticfiles %}
+{% block title %}Participar en Consulta{% endblock %}
+{% block contenido %}
+    <h1 class="text-center">Encuesta de la constituyente</h1><hr>
+    <h4 class="text-justify">
+        Un sistema sencillo y soberano, desarrollado bajo la premisa de tecnologías libres y trabajo colaborativo,
+        para ampliar la participación protagónica en la convocatoria a la Asamblea Nacional Constituyente.
+        A continuación encontrará 3 preguntas sencillas que le permitirán expresar su opinión sobre la Constituyente.
+    </h4>
+    <button class="btn btn-red btn-lg center-block" data-toggle="modal" data-target="#consultaModal"> Participar en la consulta </button>
+
+    <div class="modal fade" id="consultaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel"> Consulta </h4>
+            </div>
+            <div class="modal-body">
+                <form action="" role="form" class="form form-horizontal validate-form" method="post" autocomplete="off" id="encuesta_form">
+                    {% csrf_token %}
+                    <div class="row text-center">
+                        <h1>Consulta</h1><hr>
+                        <div class="row center-block" style="width: 90%">
+                            <div class="progress non-null" role="progressbar" id="status" >
+                              <div class="progress-bar progress-bar-red progress-bar active" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                <div class="bar" style="width:100%"><span style="color:black;">Progreso</span></div>
+                              </div>
+                            </div>
+                        </div>
+                        <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                            <!-- Indicators -->
+                            <ol class="carousel-indicators">
+                                {% for key, value in preguntas.items  %}
+                                    <li data-target="#myCarousel" class="{% if forloop.counter0 == 0 %}active{%endif%}"></li>
+                                {% endfor %}
+                                <li data-target="#myCarousel"></li>
+                            </ol>
+                          
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner" role="listbox">
+                                {% for key, value in preguntas.items  %}
+                                    <div class="col-md-6 col-sm-6 col-xs-6 col-xs-offset-3 col-md-offset-3 col-sm-offset-3 item {% if forloop.counter == 1 %}active{% endif %}">
+                                        <div class="row">
+                                            <label class="control-label">
+                                                {{ value.label | safe }}
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                                {{ value.field | safe }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="col-md-6 col-sm-6 col-xs-6 col-xs-offset-3 col-md-offset-3 col-sm-offset-3 item">
+                                    <div class="row">
+                                        <button type="submit" onclick="send_poll(event);" class="btn btn-red">
+                                            Registrar Participación
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+            
+                          
+                            <!-- Left and right controls -->
+                            <a class="left carousel-control" href="#myCarousel" role="button" onclick="go_back();">
+                                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                <span class="sr-only">Anterior</span>
+                            </a>
+                            <a class="right carousel-control" href="#myCarousel" role="button" onclick="control_progress();">
+                                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                <span class="sr-only">Siguiente</span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-warning pull-left" href="{% url 'participacion_index' %}">Regresar</a>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+{% endblock %}
+{% block extraJs %}
+    <script src="{% static "js/attrchange.js" %}"></script>
+<script>
+$(document).ready(function(){
+  $('.icheck').each(function(){
+    var self = $(this);
+      label = self.prev(),
+      label_text = label.text();
+
+    label.remove();
+    self.iCheck({
+      checkboxClass: 'icheckbox_line-red',
+      radioClass: 'iradio_line-red',
+      insert: '<div class="icheck_line-icon"></div>' + label_text
+    });
+  });
+  
+  // Se chequea el campo de
+  $('.iradio_line-red').attrchange({
+    trackValues: true, // set to true so that the event object is updated with old & new values
+    callback: function(evnt) {
+        if(evnt.attributeName == "class") { // which attribute you want to watch for changes
+            if(evnt.newValue.search("checked") != -1) { // "open" is the class name you search for inside "class" attribute
+                var padre = $(this).parent();
+                var just = padre.find('textarea');
+                if (just.length != 0) {
+                    var option = padre.find('.checked').find('input');
+                    if (option.val() == "Si") {
+                        $('#div_justificar_'+option.attr('id')).show();
+                    }
+                    else{
+                        $('#div_justificar_'+option.attr('id')).hide();
+                    }
+                }
+            }
+        }
+    }
+});
+});
+</script>
+{% endblock %}

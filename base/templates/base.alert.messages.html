@@ -1,0 +1,19 @@
+{% for message in messages %}
+    {% if message %}
+        <script type="text/javascript">
+            var msg = "{{ message }}";
+            MaterialDialog.alert(
+                msg, // Alert Body (Acepts html tags)
+                {
+                    title:'Alerta', // Modal title
+                    buttons:{ // Receive buttons (Alert only use close buttons)
+                        close:{
+                            text:'Cerrar', //Text of close button
+                            className:'red', // Class of the close button
+                        }
+                    }
+                }
+            );
+        </script>
+    {% endif %}
+{% endfor %}

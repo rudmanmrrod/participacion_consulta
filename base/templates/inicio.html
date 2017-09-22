@@ -1,0 +1,15 @@
+{% extends 'base.template.html' %}
+{% load staticfiles %}
+{% block title %}Inicio{% endblock %}
+{% block content %}
+    <div class="center">
+        <h1>Bienvenido a la consulta</h1><hr>
+        <p>Este sistema le permite realizar de manera flexible, sistemática y sencilla para
+        todo tipo de consultas.</p>
+        <h3>¿Deseas participar en alguna consulta?</h3>
+        <a type="button" href="{% url 'participacion_index' %}" class="btn">Participar</a><br><br>
+        <p>Éste es el sitio indicado para iniciar.</p><br>
+        <a type="button" href="{% url 'register' %}" class="btn">Registrarse</a><br><br>
+        <a type="button" href="{% url 'login' %}" class="btn">Iniciar Sesión</a>
+        </div>
+{% endblock %}

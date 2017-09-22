@@ -1,0 +1,34 @@
+{% extends 'consulta.base.html' %}
+{% load staticfiles %}
+{% block title %}Mi participación{% endblock %}
+{% block contenido %}
+    <h1 class="text-center">Mis Aportes</h1><hr>
+    {% for aportes in object_list %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <ul>
+                    <li><b>Pregunta: </b>{{ aportes.pregunta.texto_pregunta }}</li>
+                    <li><b>Objetivo: </b>
+                         {% for key,value in objetivos.items %}
+                            {% if key == aportes.objetivo %}
+                                {{value}}
+                            {% endif %}
+                         {% endfor %}
+                    </li>
+                </ul>
+            </div>
+            <div class="panel-footer">
+                <a class="btn btn-primary" href="{% url 'certificado' aportes.pk %}">Ver Certificado</a>
+                <a class="btn twitter-button" target="_blank"
+                   href="https://twitter.com/intent/tweet?hashtags=UniversidadProductivaYParticipativa&url=http://localhost:8003/certificado/{{aportes.pk}}&text=Ya%20realicé%20mi%20aporte%20a%20la%20ANC,%20en%20el%20Sistema%20de%20consulta%20abierta">
+                <span><img src="{% static 'img/Twitter_logo_white_16.png'%}""></span> Compartir en Twitter
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <h3>No haz realizado ningun aporte.</h3>
+    {% endfor %}
+    {% if object_list %}
+        {% include 'base.paginator.html' with paginator=page_obj %}
+    {% endif %}
+{% endblock %}

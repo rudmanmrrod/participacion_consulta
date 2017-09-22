@@ -1,0 +1,86 @@
+{% load staticfiles %}
+<div class="modal fade" id="documentos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Documentos</h4>
+            </div>
+            <div class="modal-body">
+                <p class="text-justify">Documentos de intéres que pueden ser útiles para la comprensión y
+                posterior participación en la consulta de la constituyente</p>
+                <ul>
+                    <li><a href="{% static 'docs/Bases-Comiciales-ANC.pdf'%}" target="_blank">
+                        Bases Comiciales para la Asamblea Nacional Constituyente
+                    </a></li>
+                    <li><a href="{% static 'docs/Documento-Asamblea-Nacional-Constituyente.pdf'%}" target="_blank">
+                        Asamblea Nacional Constituyente. Documento para el Estudio
+                    </a></li>
+                    <li><a href="{% static 'docs/Constitucion.pdf'%}" target="_blank">
+                        Constitución de la República Bolivariana de Venezuela
+                    </a></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-red" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Información del Proyecto }
+<div class="modal fade" id="proyecto" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">El Proyecto</h4>
+            </div>
+            <div class="modal-body" style="color:gray">
+                <p class="text-justify">
+                    El Sistema de Consulta Abierta, Fue desarrollado por el Centro Nacional de
+                    Desarrollo e Investigación en Tecnologías Libres CENDITEL, ente adscrito del
+                    Ministerio del Poder Popular para Educación Universitaria, Ciencia y Tecnología
+                    (MPPEUCT).
+                </p>
+                
+                <p class="text-justify">
+                    CENDITEL, es una institución fundada por el Presidente Hugo Chávez Frias en el año
+                    2007. Cuenta con un grupo sólido de investigación, un equipo transdisciplinario de
+                    profesionales, que a lo largo de sus 14 años se ha abocado por una parte, a
+                    comprender las relaciones políticas, sociales y económicas que definen la
+                    generación, utilización y acceso al conocimiento en nuestro continente y por otra
+                    parte, a estudiar los problemas estructurales que enfrenta nuestro país, para así
+                    desarrollar soluciones tecnológicas, entendiendo que no se trata sólo de un
+                    dispositivo o software, la tecnología implica los procesos y sus interrelaciones
+                    entre los distintos actores (sean colectivos, individuos, procesos productivos,
+                    dispositivos, entre otros).
+                </p>
+                <h4 class="text-center">Licenciamiento</h4>
+                <p class="text-justify">
+                En conformidad con lo establecido en la Ley de Infogobierno de la República
+                Bolivariana de Venezuela, usted puede copiar, adaptar, publicar y comunicar el
+                código fuente de este software, preservando los derechos morales de los autores y
+                manteniendo los mismos principios para las obras derivadas, de conformidad con los
+                términos y condiciones de la licencia de software de CENDITEL. Cada vez que copie y
+                distribuya el código fuente debe acompañarlo de una copia de la licencia. Para más
+                información sobre los términos y condiciones de la licencia visite la siguiente
+                dirección electrónica:
+                </p>
+                <p class="text-center"><a href="http://conocimientolibre.cenditel.gob.ve/licencia-de-software-v-1-3/" target="_blank">
+                    <b>Licencia de Software v1.3</b>
+                </a></p>
+                <h4 class="text-center">Código Fuente</h4>
+                
+                <p>Puede descargar el código fuente de la aplicación en:</p>
+                <p class="text-center"><a href="https://planificacion.cenditel.gob.ve/trac/browser/consulta_publica/?rev=70955988a315327a8aac1fe450dfe7122d864923"
+                target="_blank">
+                    <b>Código Fuente</b>
+                </a></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-red" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

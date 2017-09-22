@@ -1,0 +1,7 @@
+*.pyc
+.html~
+db.sqlite3
+*.py~
+*.sqlite3
+migrations
+migrations/*

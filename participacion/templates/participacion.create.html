@@ -1,0 +1,116 @@
+{% extends 'base.template.html' %}
+{% load staticfiles %}
+{% block title %}Participar en Consulta{% endblock %}
+{% block content %}
+    <form action="" role="form" class="form form-horizontal validate-form" method="post" autocomplete="off" id="encuesta_form">
+        {% csrf_token %}
+        <div class="carousel-slider center">
+            {% for key, value in preguntas.items  %}
+                <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
+                    {{ value.label | safe }}
+                    <div class="input-field">
+                        {{ value.field | safe }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </form>
+    
+    <div class="carousel carousel-slider center" data-indicators="true" style="height: 400px;">
+        <div class="carousel-item red white-text" href="#one!">
+          <h2>First Panel</h2>
+          <p class="white-text">This is your first panel</p>
+        </div>
+        <div class="carousel-item amber white-text" href="#two!">
+          <h2>Second Panel</h2>
+          <p class="white-text">This is your second panel</p>
+        </div>
+        <div class="carousel-item green white-text" href="#three!">
+          <h2>Third Panel</h2>
+          <p class="white-text">This is your third panel</p>
+        </div>
+        <div class="carousel-item blue white-text" href="#four!">
+          <h2>Fourth Panel</h2>
+          <p class="white-text">This is your fourth panel</p>
+        </div>
+      </div>
+                  
+
+    <div class="modal fade" id="consultaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel"> Consulta </h4>
+            </div>
+            <div class="modal-body">
+                <form action="" role="form" class="form form-horizontal validate-form" method="post" autocomplete="off" id="encuesta_form">
+                    {% csrf_token %}
+                    <div class="row text-center">
+                        <h1>Consulta</h1><hr>
+                        <div class="row center-block" style="width: 90%">
+                            <div class="progress non-null" role="progressbar" id="status" >
+                              <div class="progress-bar progress-bar-red progress-bar active" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                <div class="bar" style="width:100%"><span style="color:black;">Progreso</span></div>
+                              </div>
+                            </div>
+                        </div>
+                        <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                            <!-- Indicators -->
+                            <ol class="carousel-indicators">
+                                {% for key, value in preguntas.items  %}
+                                    <li data-target="#myCarousel" class="{% if forloop.counter0 == 0 %}active{%endif%}"></li>
+                                {% endfor %}
+                                <li data-target="#myCarousel"></li>
+                            </ol>
+                          
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner" role="listbox">
+                                {% for key, value in preguntas.items  %}
+                                    <div class="col-md-6 col-sm-6 col-xs-6 col-xs-offset-3 col-md-offset-3 col-sm-offset-3 item {% if forloop.counter == 1 %}active{% endif %}">
+                                        <div class="row">
+                                            <label class="control-label">
+                                                {{ value.label | safe }}
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                                {{ value.field | safe }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="col-md-6 col-sm-6 col-xs-6 col-xs-offset-3 col-md-offset-3 col-sm-offset-3 item">
+                                    <div class="row">
+                                        <button type="submit" onclick="send_poll(event);" class="btn btn-red">
+                                            Registrar Participación
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+            
+                          
+                            <!-- Left and right controls -->
+                            <a class="left carousel-control" href="#myCarousel" role="button" onclick="go_back();">
+                                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                <span class="sr-only">Anterior</span>
+                            </a>
+                            <a class="right carousel-control" href="#myCarousel" role="button" onclick="control_progress();">
+                                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                <span class="sr-only">Siguiente</span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-warning pull-left" href="{% url 'participacion_index' %}">Regresar</a>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+{% endblock %}
+
+{% block extraJs %}
+<script>
+    $(document).ready(function(){
+        $('.carousel.carousel-slider').carousel({fullWidth: true});    
+    });
+</script>
+{% endblock %}
