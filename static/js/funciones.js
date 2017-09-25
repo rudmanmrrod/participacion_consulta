@@ -551,48 +551,25 @@ function send_poll(event) {
     });
 }
 
-/**
- * Función para retroceder en el carrusel y bajar el valor de la
- * barra de progreso
-**/
-function go_back() {
-    var first_element = $('.carousel-indicators li')[0];
-    if($(first_element).attr('class')!=='active')
-    {
-        $('#myCarousel').carousel('prev');
-        var elements = $('.carousel-indicators li').length-1;
-        var current_value = ($('#status .progress-bar').width()/$('#status').width())*100;
-        var final_value = current_value-(100/elements);
-        $('#status .progress-bar').width(final_value+"%");
-        if (final_value!=100) {
-            $('#status .bar span').text() == "Finalizado" ? $('#status .bar span').text('Progreso'):'';
-            $('#status .progress-bar').removeClass('progress-bar-success');
-        }
-        if (final_value<=0) {
-            $('#status .bar span').css({'color':'black'});
-        }
-    }
-}
 
 /**
  * Función para aumentar la barra de progreso si se responde la encuesta
 **/
 function control_progress() {
-    var content = $('.carousel-inner .active');
+    var content = $('.swiper-slide-active');
     var not_empty = 0;
-    var elements = $('.carousel-indicators li').length-1;
     $.each(content.find('input'),function(index,value){
         var name = $(value).attr('name');
         if(name.search('radio')!=-1 || name.search('check')!=-1 || name.search('sino')!=-1){
-            not_empty = $(value).parent().attr('class').search('checked') !== -1 ? 1:not_empty;
+            not_empty = $(value).is(":checked") ? 1:not_empty;
             if (name.search('sino')!=-1) {
-                if ($(value).parent().attr('class').search('checked') !== -1 && $(value).val()=="Si") {
+                if ($(value).is(":checked") && $(value).val()=="Si") {
                     if ($(value).attr('class').search('need_justification')!=-1) {
                         var text_area = $(value).parent().parent().find('textarea');
                         not_empty = $(text_area).val().trim() !== '' ? 1:0;
                         not_empty = $(text_area).val().length >= 10 && $(text_area).val().length <= 50  ? 1:0;
                         if ($(text_area).val().length < 10 || $(text_area).val().length >50) {
-                            bootbox.alert("La longitud de la respuesta debe estar entre 10 y 50 cáracteres");
+                            MaterialDialog.alert("La longitud de la respuesta debe estar entre 10 y 50 cáracteres",{'title':"Alerta"});
                         }
                     } 
                 }               
@@ -603,89 +580,16 @@ function control_progress() {
         var name = $(value).attr('name');
         if (name.search('abierta')!==-1) {
             not_empty = $(value).val().trim() !== '' ? 1:not_empty;
-            not_empty = $(value).val().length >= 700 && $(value).val().length <= 5000  ? 1:0;
-            if ($(value).val().length < 700 || $(value).val().length >5000) {
-                bootbox.alert("La longitud de la respuesta debe estar entre 700 y 5000 cáracteres");
+            not_empty = $(value).val().trim().length >= 10 && $(value).val().trim().length <= 50  ? 1:0;
+            if ($(value).val().length < 10 || $(value).val().length >50) {
+                MaterialDialog.alert("La longitud de la respuesta debe estar entre 10 y 50 cáracteres",{'title':"Alerta"});
             }
         }
-    });
-    if (not_empty) {
-        $('#status .bar span').css({'color':'white'});
-        $('#myCarousel').carousel('next');
-        var current_value = ($('#status .progress-bar').width()/$('#status').width())*100;
-        var final_value = current_value+(100/elements);
-        $('#status .progress-bar').width(final_value+"%");
-        
-        if (final_value>=99.9) {
-            $('#status .progress-bar').width("100%");
-            $('#status .bar span').text("Finalizado");
-            $('#status .progress-bar').addClass('progress-bar-success');
-        }
-    }
+    })
+    return not_empty;
 }
 
 
-/**
- * Función que crea los textos
- */
-function create_text_files(pk){
-    $.ajax({
-        type: 'GET',
-        url: "/administrador/consulta/ajax/generar-textos-respuesta/"+pk,
-        success: function(response) {
-            bootbox.alert(response.mensaje);
-        },
-        error:function(error){
-                bootbox.alert("Ocurrió un error inesperado");
-        }
-    });
-}
-
-
-/**
- * @brief Función que actualiza los datos de combos dependientes
- * @param opcion Código del elemento seleccionado por el cual se filtrarán los datos en el combo dependiente
- * @param app Nombre de la aplicación en la cual buscar la información a filtrar
- * @param mod Modelo del cual se van a extraer los datos filtrados según la selección
- * @param campo Nombre del campo con el cual realizar el filtro de los datos
- * @param n_value Nombre del campo que contendra el valor de cada opción en el combo
- * @param n_text Nombre del campo que contendrá el texto en cada opción del combo
- * @param combo_destino Identificador del combo en el cual se van a mostrar los datos filtrados
- * @param bd Nombre de la base de datos, si no se específica se asigna el valor por defecto
- */
-function actualizar_combo(opcion, app, mod, campo, n_value, n_text, combo_destino, bd) {
-    /* Verifica si el parámetro esta definido, en caso contrario establece el valor por defecto */
-    bd = typeof bd !== 'undefined' ? bd : 'default';
-    $.ajaxSetup({
-        async: false
-    });
-    $.getJSON('/ajax/actualizar-combo/', {
-        opcion:opcion, app:app, mod:mod, campo:campo, n_value:n_value, n_text: n_text, bd:bd
-    }, function(datos) {
-
-        var combo = $("#"+combo_destino);
-
-        if (datos.resultado) {
-
-            if (datos.combo_disabled == "false") {
-                combo.removeAttr("disabled");
-            }
-            else {
-                combo.attr("disabled", "true");
-            }
-
-            combo.html(datos.combo_html);
-        }
-        else {
-            bootbox.alert(datos.error);
-            console.log(datos.error);
-        }
-    }).fail(function(jqxhr, textStatus, error) {
-        var err = textStatus + ", " + error;
-        bootbox.alert( 'Petición fállida' + err );
-        console.log('Petición fállida ' + err)
-    });
-}
 
 /**
  * @brief Función para recargar el captcha vía json
@@ -719,39 +623,19 @@ function mostrar(valor,condicion,element) {
 }
 
 /**
- * @brief Función para habilitar/deshabilitar un campo
- * @param valor Recibe el valor
- * @param condicion Recibe la condición a evaluar
- * @param element Recibe el elemento a modificar
- * @param attr_name Recibe el nombre del atributo a agregar/remover
+ * @brief Función para medir la cantidad de caracteres escritos
+ * en el input
+ * @param obj Recibe el input en la función oninput
  */
-function habilitar(valor,condicion,element,attr_name) {
-    if (valor!=condicion) {
-        $('#'+element).attr(attr_name,true)
-    }
-    else{
-        $('#'+element).removeAttr(attr_name);
-    }
-}
-
-/**
- * @brief Función para mostrar los sectores
- * @param valor Recibe el valor
- */
-function mostrar_sector(valor) {
-    mostrar(valor,'ES','sector_estudiante');
-    mostrar(valor,'TR','sector_trabajador'); 
-}
-
-/**
- * @brief Función para validar si pertenece a un colectivo
- * @param valor Recibe el valor
- */
-function habilitar_colectivo(valor) {
-    habilitar(valor,'CO','id_colectivo','readonly');
-}
-
 function medir_caracters(obj) {
     var span = $(obj).parent().find('#longitud span');
-    span.text($(obj).val().length);
+    span.text($(obj).val().trim().length);
+}
+
+/**
+ * @brief Función para quitar doble espacios en el input
+ * @param obj Recibe el input en la función oninput
+ */
+function quitar_espacios(obj) {
+    $(obj).val($(obj).val().replace("  ",""));
 }

@@ -10,7 +10,7 @@ Copyleft (@) 2017 CENDITEL nodo Mérida - https://planificacion.cenditel.gob.ve/
 # @author Rodrigo Boet (rboet at cenditel.gob.ve)
 # @author <a href='http://www.cenditel.gob.ve'>Centro Nacional de Desarrollo e Investigación en Tecnologías Libres
 # (CENDITEL) nodo Mérida - Venezuela</a>
-# @copyright <a href='http://www.gnu.org/licenses/gpl-2.0.html'>GNU Public License versión 2 (GPLv2)</a>
+# @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
 # @version 1.0
 import json
 from django.shortcuts import render, redirect
@@ -99,13 +99,14 @@ class ParticipacionCreate(TemplateView):
                         campo += '<label for="'+str(opcion['id'])+'">Sí</label></p>'
                         campo += '<p><input type="radio" name="consulta_respuesta_sino_'+str(pregunta['id'])+'" id="'+str(opcion['id'])+'"value="No">'
                         campo += '<label for="'+str(opcion['id'])+'">No</label></p>'
-                        campo += '<div id="div_justificar_'+kwargs['pk']+'" style="display:none;"><label>Indique con que instrumento legal en vigencia se relaciona su aporte</label>'
+                        campo += '<div id="div_justificar_'+kwargs['pk']+'" style="display:none;">'
                         campo += '<textarea class="form-control" id="respuesta_justificar_'+kwargs['pk']+'" name="consulta_respuesta_justificar_'+str(pregunta['id'])+'">'
                         campo += '</textarea></div>'
                 else:
-                    campo += '<label class="text-center">La propuesta debe tener entre 700 y 5000 caracteres</label><br>'
-                    campo += '<div class="input-field"><textarea class="form-control" name="consulta_respuesta_abierta_'+str(pregunta['id'])+'" oninput="medir_caracters(this);"></textarea></div>'
-                    campo += '<p class="right" id="longitud"><span>0</span> caracteres escritos</p><br/><br/><br/>'
+                    campo += '<label class="text-center">La propuesta debe tener entre 10 y 50 caracteres</label><br>'
+                    campo += '<div class="input-field"><textarea class="form-control" name="consulta_respuesta_abierta_'+str(pregunta['id'])+'"'
+                    campo += 'oninput="medir_caracters(this);quitar_espacios(this);"></textarea>'
+                    campo += '<p class="right" id="longitud"><span>0</span> caracteres escritos</p></div><br/><br/><br/>'
                 valores[pregunta['id']] = {'label':label,'field':campo}
             kwargs['preguntas'] = valores
         return super(ParticipacionCreate, self).get_context_data(**kwargs)

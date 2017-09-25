@@ -7,3 +7,31 @@ body {
 main {
     flex: 1 0 auto;
 }
+
+.carousel-slider {
+    height: 400px !important;
+}
+
+@media only screen and (min-width : 600px) {
+    .carousel-item{
+        margin-top: 0px;
+    }
+}
+
+@media only screen and (min-width : 700px) {
+    .carousel-item{
+        margin-top: 220px;
+    }
+}
+
+@media only screen and (min-width : 1024px) {
+    .carousel-item{
+        margin-top: 420px;
+    }
+}
+
+.swiper-container {
+    width: 95%;
+    height: 95%;
+    padding: 50px;
+}
