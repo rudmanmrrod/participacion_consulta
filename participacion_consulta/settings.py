@@ -143,7 +143,12 @@ LOGIN_URL = "/login"
 LOGOUT_URL= "/logout"
 
 ## Url de la api
-API_URL = 'http://localhost:8003/api/'
+API_BASE_URL = 'http://localhost:8003/'
+
+API_URL = API_BASE_URL+'api/'
 
 ## Token secreto de la consulta
 CONSULTA_SECRET_TOKEN = ['uA4xFCDUEvBp:Mw:1ddL7M:Fus-DX_oZLNqcvHNwZEAMlJLwHU','UcRqZXNb1uLt:Mw:1dkwbl:IDBGapd8_ZMfBZiKOAGhxnhilKQ']
+
+## Se almacenan los mensajes en sesion
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

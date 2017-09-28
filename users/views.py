@@ -17,12 +17,14 @@ from django.views.generic import FormView, RedirectView, CreateView, UpdateView,
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth import authenticate, logout, login
+from django.contrib import messages
+from django.contrib.auth import logout, login
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
 from .forms import LoginForm, UserRegisterForm
 from base.constant import SECTORES, SECTOR_ESTUDIANTE, SECTOR_TRABAJADOR
+from base.functions import autenticar_rest, get_user_data, check_or_create
 from participacion.models import RespuestaAbierta
 
 class LoginView(FormView):
@@ -30,28 +32,13 @@ class LoginView(FormView):
     Clase que gestiona la vista principal del logeo de usuario
 
     @author Rodrigo Boet (rboet at cenditel.gob.ve)
-    @copyright <a href='http://www.gnu.org/licenses/gpl-2.0.html'>GNU Public License versión 2 (GPLv2)</a>
+    @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
     @date 01-03-2017
     @version 1.0.0
     """
     form_class = LoginForm
     template_name = 'user.login.html'
-
-    def get_success_url(self):
-        """!
-        Metodo que permite definir la url de dirección al ser válido el formulario
-    
-        @author Rodrigo Boet (rboet at cenditel.gob.ve)
-        @copyright GNU/GPLv2
-        @date 22-02-2017
-        @param self <b>{object}</b> Objeto que instancia la clase
-        @return Retorna la url
-        """
-        grupo = self.request.user.groups.get()
-        if('Participante' in grupo.name):
-            return reverse_lazy('participacion_index')
-        elif('Administrador' in grupo.name):
-            return reverse_lazy('administrador_base')
+    success_url = reverse_lazy('inicio')
 
     def form_valid(self, form):
         """!
@@ -66,8 +53,10 @@ class LoginView(FormView):
         """
         usuario = form.cleaned_data['usuario']
         contrasena = form.cleaned_data['contrasena']
-        usuario = authenticate(username=usuario, password=contrasena)
-        login(self.request, usuario)
+        usuario = autenticar_rest(username=usuario, password=contrasena)
+        user_data = get_user_data(usuario,contrasena,usuario['token'])
+        user = check_or_create(user_data,contrasena)
+        login(self.request, user)
         if self.request.POST.get('remember_me') is not None:
             # Session expira a los dos meses si no se deslogea
             self.request.session.set_expiry(1209600)
@@ -79,7 +68,7 @@ class LogoutView(RedirectView):
     Clase que gestiona la vista principal del deslogeo de usuario
 
     @author Rodrigo Boet (rboet at cenditel.gob.ve)
-    @copyright <a href='http://www.gnu.org/licenses/gpl-2.0.html'>GNU Public License versión 2 (GPLv2)</a>
+    @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
     @date 01-03-2017
     @version 1.0.0
     """
@@ -105,7 +94,7 @@ class RegisterView(SuccessMessageMixin,FormView):
     Muestra el formulario de registro de usuarios
 
     @author Ing. Leonel P. Hernandez M. (lhernandez at cenditel.gob.ve)
-    @copyright <a href='http://www.gnu.org/licenses/gpl-2.0.html'>GNU Public License versión 2 (GPLv2)</a>
+    @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
     @date 09-01-2017
     @version 1.0.0
     """
@@ -134,9 +123,6 @@ class RegisterView(SuccessMessageMixin,FormView):
         self.object.email = form.cleaned_data['email']
         self.object.save()
         
-        ## Se asigna el grupo de Participantes por defecto
-        self.object.groups.add(2)
-        
         parroquia = Parroquia.objects.get(id=form.cleaned_data['parroquia'])
         
         perfil = Perfil()
@@ -162,7 +148,7 @@ class PerfilUpdate(SuccessMessageMixin,LoginRequiredMixin,UpdateView):
     Clase que gestiona la actualización del perfil
 
     @author Rodrigo Boet (rboet at cenditel.gob.ve)
-    @copyright <a href='http://www.gnu.org/licenses/gpl-2.0.html'>GNU Public License versión 2 (GPLv2)</a>
+    @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
     @date 24-04-2017
     @version 1.0.0
     """
@@ -185,7 +171,8 @@ class PerfilUpdate(SuccessMessageMixin,LoginRequiredMixin,UpdateView):
         @return Direcciona al 403 si no es su perfil
         """
         if int(self.request.user.id) != int(self.kwargs['pk']):
-           return redirect('base_403')
+            messages.info(self.request,"No puede acceder a este perfil")
+            return redirect('inicio')
         return super(PerfilUpdate, self).dispatch(request, *args, **kwargs)
     
     def get_object(self, queryset=None):
@@ -272,7 +259,7 @@ class MiParticipacion(LoginRequiredMixin,ListView):
     de la consulta
 
     @author Rodrigo Boet (rboet at cenditel.gob.ve)
-    @copyright <a href='http://www.gnu.org/licenses/gpl-2.0.html'>GNU Public License versión 2 (GPLv2)</a>
+    @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
     @date 07-09-2017
     @version 1.0.0
     """

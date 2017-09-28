@@ -26,7 +26,7 @@ from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from base.fields import CedulaField
 from base.functions import (
     cargar_entidad, cargar_municipios, cargar_parroquias,
-    validate_cedula, validate_email
+    validate_cedula, validate_email, autenticar_rest
     )
 from base.constant import SECTORES, PARTICIPACION, SECTOR_ESTUDIANTE, SECTOR_TRABAJADOR
 from captcha.fields import CaptchaField
@@ -37,7 +37,7 @@ class LoginForm(forms.Form):
     Clase del formulario de logeo
 
     @author Rodrigo Boet (rboet at cenditel.gob.ve)
-    @copyright <a href='http://www.gnu.org/licenses/gpl-2.0.html'>GNU Public License versión 2 (GPLv2)</a>
+    @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
     @date 01-03-2017
     @version 1.0.0
     """
@@ -88,7 +88,7 @@ class LoginForm(forms.Form):
         """
         usuario = self.cleaned_data['usuario']
         contrasena = self.cleaned_data['contrasena']
-        usuario = authenticate(username=usuario,password=contrasena)
+        usuario = autenticar_rest(usuario,contrasena)
         if(not usuario):
             msg = "Verifique su usuario o contraseña"
             self.add_error('usuario', msg)
@@ -102,7 +102,7 @@ class UserRegisterForm(forms.ModelForm):
     Formulario de Registro
 
     @author Rodrigo Boet (rboet at cenditel.gob.ve)
-    @copyright <a href='http://www.gnu.org/licenses/gpl-2.0.html'>GNU Public License versión 2 (GPLv2)</a>
+    @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
     @date 20-04-2017
     @version 1.0.0
     """

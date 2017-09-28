@@ -492,28 +492,23 @@ function update_question() {
  * Función para enviar los respuestas de la encuesta
  * @param event Recibe el evento
 **/
-function send_poll(event) {
-    event.preventDefault();
-    $('.btn-primary').attr('disabled',true);
+function send_poll() {
+    $('.submit').attr('disabled',true);
     var form = $("#encuesta_form");
     var routes = $(location).attr('pathname').split('/');
-    if (routes.length==4) {
-        var pk = routes[routes.length-2];
-        var obj = routes[routes.length-1];
-    }
-    else{
-        var pk = routes[routes.length-1];
-        var obj = pk;
-    }
+    var pk = routes[routes.length-1];
     var participacion;
-    $.get('/participacion/ajax/validar-participacion?consulta='+pk+'&objetivo='+obj)
+    $.get(URL_VALIDAR_PARTICIPACION+'?consulta='+pk)
     .done(function(response){
         if (response.mensaje) {
             participacion = response.participacion
             if (participacion) {
-                bootbox.alert("Ya participó para esta consulta <br>Será direccionado en 4 segundos");
+                MaterialDialog.alert("Ya participó en esta consulta <br>Será direccionado en 4 segundos",{
+                    'title':"Error",
+                    'buttons':{'close':{'text':'cerrar'}}
+                });
                 setTimeout(function(){
-                    $(location).attr('href', $(location).attr('origin')+'/participacion')    
+                    $(location).attr('href', URL_PARTICIPACION)    
                 },4000);
             }
             else
@@ -521,23 +516,32 @@ function send_poll(event) {
                 $.ajax({
                     type: 'POST',
                     data: $(form).serialize(),
-                    url: "/participacion/"+pk+"/"+obj,
+                    url: URL_REGISTRAR_PARTICIPACION+pk,
                     success: function(response) {
                         if (response.code == true) {
-                            bootbox.alert("Se registró su participación con éxito <br>Será direccionado en 4 segundos");
+                            MaterialDialog.alert("Se registró su participación con éxito <br>Será direccionado en 4 segundos",{
+                                'title':"Éxito",
+                                'buttons':{'close':{'text':'cerrar'}}
+                            });
                             setTimeout(function(){
-                                $(location).attr('href', $(location).attr('origin')+'/participacion')    
+                                $(location).attr('href', URL_PARTICIPACION)    
                             },4000);
                         }
                         else{
-                            bootbox.alert("Ocurrió un error inesperado");
-                            $('.btn-primary').attr('disabled',false);
+                            MaterialDialog.alert("Ocurrió un error inesperado",{
+                                'title':"Error",
+                                'buttons':{'close':{'text':'cerrar'}}
+                            });
+                            $('.btn').attr('disabled',false);
                         }
                     },
                         error:function(error)
                         {
-                            bootbox.alert("Ocurrió un error inesperado");
-                            $('.btn-primary').attr('disabled',false);
+                            MaterialDialog.alert("Ocurrió un error inesperado",{
+                                'title':"Error",
+                                'buttons':{'close':{'text':'cerrar'}}
+                            });
+                            $('.btn').attr('disabled',false);
                         }
                 });
             }
@@ -564,12 +568,17 @@ function control_progress() {
             not_empty = $(value).is(":checked") ? 1:not_empty;
             if (name.search('sino')!=-1) {
                 if ($(value).is(":checked") && $(value).val()=="Si") {
-                    if ($(value).attr('class').search('need_justification')!=-1) {
-                        var text_area = $(value).parent().parent().find('textarea');
-                        not_empty = $(text_area).val().trim() !== '' ? 1:0;
-                        not_empty = $(text_area).val().length >= 10 && $(text_area).val().length <= 50  ? 1:0;
-                        if ($(text_area).val().length < 10 || $(text_area).val().length >50) {
-                            MaterialDialog.alert("La longitud de la respuesta debe estar entre 10 y 50 cáracteres",{'title':"Alerta"});
+                    if ($(value).attr('class')) {
+                        if ($(value).attr('class').search('need_justification')!=-1) {
+                            var text_area = $(value).parent().parent().find('textarea');
+                            not_empty = $(text_area).val().trim() !== '' ? 1:0;
+                            not_empty = $(text_area).val().length >= 10 && $(text_area).val().length <= 50  ? 1:0;
+                            if ($(text_area).val().length < 10 || $(text_area).val().length >50) {
+                                MaterialDialog.alert("La longitud de la respuesta debe estar entre 10 y 50 cáracteres",{
+                                    'title':"Alerta",
+                                    'buttons':{'close':{'text':'cerrar'}}
+                                });
+                            }
                         }
                     } 
                 }               
@@ -582,7 +591,10 @@ function control_progress() {
             not_empty = $(value).val().trim() !== '' ? 1:not_empty;
             not_empty = $(value).val().trim().length >= 10 && $(value).val().trim().length <= 50  ? 1:0;
             if ($(value).val().length < 10 || $(value).val().length >50) {
-                MaterialDialog.alert("La longitud de la respuesta debe estar entre 10 y 50 cáracteres",{'title':"Alerta"});
+                MaterialDialog.alert("La longitud de la respuesta debe estar entre 10 y 50 cáracteres",{
+                    'title':"Alerta",
+                    'buttons':{'close':{'text':'cerrar'}}
+                });
             }
         }
     })

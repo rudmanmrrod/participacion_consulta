@@ -18,6 +18,7 @@ from .views import *
 urlpatterns = [
     url(r'^$', ParticipacionIndex.as_view(), name = "participacion_index"),
     url(r'^crear/(?P<pk>\d+)$', ParticipacionCreate.as_view(), name = "participacion_create"),
+    url(r'^crear/$', ParticipacionCreate.as_view(), name = "participacion_create_nid"),
 ]
 
 ## Ajax
