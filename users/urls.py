@@ -20,6 +20,5 @@ urlpatterns = [
     url(r'^login$', LoginView.as_view(), name = "login"),
     url(r'^logout$', LogoutView.as_view(), name = "logout"),
     url(r'^register$', RegisterView.as_view(), name = "register"),
-    url(r'^mi-participacion$', MiParticipacion.as_view(), name = "mi_participacion"),
     #url(r'^update/(?P<pk>\d+)$', PerfilUpdate.as_view(), name = "update"),
 ]

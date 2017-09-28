@@ -35,3 +35,50 @@ main {
     height: 95%;
     padding: 50px;
 }
+
+/* Input colors */
+.input-field .prefix.active{
+    color: #1565C0;
+}
+
+.input-field input[type=text]:focus + label,
+.input-field input[type=password]:focus + label
+{
+  color: #1565C0;
+}
+
+.input-field input[type=text]:focus,
+.input-field input[type=password]:focus
+{
+  border-bottom: 1px solid #1565C0;
+  box-shadow: 0 1px 0 0 #1565C0;
+}
+
+.invalid input {
+    border-bottom: 1px solid #F44336;
+    box-shadow: 0 1px 0 0 #F44336;
+}
+
+.invalid label,.invalid  i, .errorlist, .danger {
+    color: #F44336;
+}
+
+/* Color de los check y radio */
+[type="checkbox"]:checked+label:before {
+    border-right: 2px solid #1565C0;
+    border-bottom: 2px solid #1565C0;
+}
+
+[type="radio"]:checked+label:after,
+[type="radio"].with-gap:checked+label:after {
+    background-color: #1565C0;
+}
+[type="radio"]:checked+label:after,
+[type="radio"].with-gap:checked+label:before,
+[type="radio"].with-gap:checked+label:after {
+    border: 2px solid #1565C0;
+}
+
+.dropdown-content li>a, .dropdown-content li>span {
+    color: #1565C0;
+}

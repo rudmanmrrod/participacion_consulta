@@ -1,0 +1,26 @@
+{% extends 'base.template.html' %}
+{% load staticfiles %}
+{% block title %}Mi participación{% endblock %}
+{% block content %}
+    <h4 class="center">Mis Participación</h4><hr>
+    {% for item in object_list %}
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title"><b>Nombre de la consulta: </b>{{ item.nombre_consulta }}</span>
+            </div>
+            <ol>
+                {% for preguntas in item.preguntas %}
+                    <li>{{preguntas.texto_pregunta}}</li>
+                {% endfor %}
+            </ol>
+            <div class="card-action">
+                
+            </div>
+        </div>
+    {% empty %}
+        <h3>No has realizado ningun aporte.</h3>
+    {% endfor %}
+    {% if object_list %}
+        {% include 'base.paginator.html' with paginator=page_obj %}
+    {% endif %}
+{% endblock %}

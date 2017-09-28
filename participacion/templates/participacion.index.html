@@ -14,12 +14,15 @@
                     {% endfor %}
                 </ol>
                 <div class="card-action">
-                    <a type="button" class="btn waves-effect" href="{% url 'participacion_create' item.id %}">
+                    <a type="button" class="btn waves-effect blue lighten-1" href="{% url 'participacion_create' item.id %}">
                         <i class="material-icons left">insert_chart</i> Participar
                     </a>
                 </div>
             </div>
         {% endfor %}
+        {% if consultas %}
+            {% include 'base.paginator.html' with paginator=page_obj %}
+        {% endif %}
         
     </div>
 {% endblock %}

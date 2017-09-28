@@ -1,4 +1,4 @@
-<nav class="">
+<nav class="blue darken-3">
   <div class="nav-wrapper">
     <a class="brand-logo" href="{% url 'inicio' %}">Participación de Consultas</a>
     {% if request.user.is_authenticated %}
@@ -7,6 +7,7 @@
       <ul id='dropdown1' class='dropdown-content'>
         <li><a href="">Perfil</a></li>
         <li><a href="{% url 'participacion_index'%}">Consultas</a></li>
+        <li><a href="{% url 'mi_participacion' %}">Mi Participación</a></li>
         <li><a href="{% url 'logout' %}">Logout</a></li>
       </ul>
     </ul>

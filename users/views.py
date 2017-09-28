@@ -14,7 +14,6 @@ Copyleft (@) 2017 CENDITEL nodo Mérida - https://planificacion.cenditel.gob.ve/
 # @version 1.0
 from django.shortcuts import render, redirect
 from django.views.generic import FormView, RedirectView, CreateView, UpdateView, ListView
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
@@ -168,7 +167,7 @@ class PerfilUpdate(SuccessMessageMixin,LoginRequiredMixin,UpdateView):
         @param request <b>{object}</b> Objeto que contiene la petición
         @param args <b>{object}</b> Objeto que contiene los argumentos
         @param kwargs <b>{object}</b> Objeto que contiene los datos de contexto
-        @return Direcciona al 403 si no es su perfil
+        @return Direcciona al inicio si no es su perfil
         """
         if int(self.request.user.id) != int(self.kwargs['pk']):
             messages.info(self.request,"No puede acceder a este perfil")
@@ -252,43 +251,4 @@ class PerfilUpdate(SuccessMessageMixin,LoginRequiredMixin,UpdateView):
         self.object.save()
         
         return super(PerfilUpdate, self).form_valid(form)
-    
-class MiParticipacion(LoginRequiredMixin,ListView):
-    """!
-    Clase que gestiona la el listado de las participaciones en los aportes
-    de la consulta
-
-    @author Rodrigo Boet (rboet at cenditel.gob.ve)
-    @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
-    @date 07-09-2017
-    @version 1.0.0
-    """
-    model = RespuestaAbierta
-    template_name = "mi_participacion.html"
-    paginate_by = 5
-    
-    def get_context_data(self, **kwargs):
-        """!
-        Metodo para cargar/obtener valores en el contexto de la vista
-    
-        @author Rodrigo Boet (rboet at cenditel.gob.ve)
-        @copyright GNU/GPLv2
-        @date 28-03-2017
-        @param self <b>{object}</b> Objeto que instancia la clase
-        @param kwargs <b>{object}</b> Objeto que contiene los datos de contexto
-        @return Retorna los datos de contexto
-        """
-        context = super(MiParticipacion, self).get_context_data(**kwargs)
-        context['object_list'] = RespuestaAbierta.objects.filter(user_id=self.request.user.id).all()
-        context['objetivos'] = OBJETIVOS_DICT
-        ## Implementación del paginador
-        paginator = Paginator(context['object_list'], self.paginate_by)
-        page = self.request.GET.get('page')
-        try:
-            kwargs['page_obj'] = paginator.page(page)
-        except PageNotAnInteger:
-            kwargs['page_obj'] = paginator.page(1)
-        except EmptyPage:
-            kwargs['page_obj'] = paginator.page(paginator.num_pages)
-        return context
     

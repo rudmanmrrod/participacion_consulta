@@ -20,6 +20,7 @@ from django.views.generic import FormView, TemplateView
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from base.functions import cargar_consultas, cargar_consulta_id, validar_participacion_general
 from .models import RespuestaAbierta, RespuestaOpciones, RespuestaSino
 import requests
@@ -34,6 +35,7 @@ class ParticipacionIndex(LoginRequiredMixin,TemplateView):
     @version 1.0.0
     """
     template_name = "participacion.index.html"
+    paginate_by = 5
     
     def get_context_data(self, **kwargs):
         """!
@@ -47,6 +49,17 @@ class ParticipacionIndex(LoginRequiredMixin,TemplateView):
         @return Retorna los datos de contexto
         """
         kwargs['consultas'] = cargar_consultas()
+        paginator = Paginator(kwargs['consultas'], self.paginate_by)
+        page = self.request.GET.get('page')
+        try:
+            kwargs['page_obj'] = paginator.page(page)
+            kwargs['consultas'] = kwargs['page_obj'].object_list
+        except PageNotAnInteger:
+            kwargs['page_obj'] = paginator.page(1)
+            kwargs['consultas'] = kwargs['page_obj'].object_list
+        except EmptyPage:
+            kwargs['page_obj'] = paginator.page(paginator.num_pages)
+            kwargs['consultas'] = kwargs['page_obj'].object_list
         return super(ParticipacionIndex, self).get_context_data(**kwargs)
         
 
@@ -252,124 +265,43 @@ def validar_participacion(request):
         return JsonResponse({'mensaje': False, 'error': str('No envío el id de la consulta')})
     
     
-    
-class ParticipacionSimpleCreate(LoginRequiredMixin,TemplateView):
+class MiParticipacion(LoginRequiredMixin,TemplateView):
     """!
-    Clase que gestiona la vista principal de la participación simple
+    Clase para mostrar los resultados en las consultas participadas
 
     @author Rodrigo Boet (rboet at cenditel.gob.ve)
     @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
-    @date 18-07-2017
+    @date 28-09-2017
     @version 1.0.0
     """
-    template_name = "participacion.create.simple.html"
+    template_name = "mi_participacion.html"
+    paginate_by = 1
     
     def get_context_data(self, **kwargs):
         """!
-        Metodo que permite cargar de nuevo valores en los datos de contexto de la vista
-    
-        @author Rodrigo Boet (rboet at cenditel.gob.ve)
-        @copyright GNU/GPLv2
-        @date 23-02-2017
-        @param self <b>{object}</b> Objeto que instancia la clase
-        @param kwargs <b>{object}</b> Objeto que contiene los datos de contexto
-        @return Retorna los datos de contexto
-        """
-        valores = {}
-        for pregunta in Pregunta.objects.filter(consulta_id=kwargs['pk']).all():
-            label = '<label class="text-center">'+pregunta.texto_pregunta+'</label>'
-            campo = ''
-            if pregunta.tipo_pregunta.id == 1:
-                campo = ''
-                for opcion in Opcion.objects.filter(pregunta_id=pregunta.id).all():
-                    campo += '<label for="'+kwargs['pk']+'">'+opcion.texto_opcion+'</label><input type="radio" name="consulta_respuesta_radio_'+str(pregunta.id)+'" id="'+kwargs['pk']+'"value="'+str(opcion.id)+'" class="icheck">'
-            elif pregunta.tipo_pregunta.id == 2:
-                campo = ''
-                for opcion in Opcion.objects.filter(pregunta_id=pregunta.id).all():
-                    campo += '<label for="'+kwargs['pk']+'">'+opcion.texto_opcion+'</label><input type="checkbox" name="consulta_respuesta_check_'+kwargs['pk']+'" id="'+kwargs['pk']+'"value="'+str(opcion.id)+'" class="icheck">'
-            elif pregunta.tipo_pregunta.id > 2 and pregunta.tipo_pregunta.id < 5:
-                if(pregunta.tipo_pregunta.id == 3):
-                    campo += '<label for="'+kwargs['pk']+'">Si</label><input type="radio" name="consulta_respuesta_sino_'+str(pregunta.id)+'" id="'+kwargs['pk']+'"value="Si" class="icheck">'
-                    campo += '<label for="'+kwargs['pk']+'">No</label><input type="radio" name="consulta_respuesta_sino_'+str(pregunta.id)+'" id="'+kwargs['pk']+'"value="No" class="icheck">'
-                else:
-                    campo += '<label for="'+kwargs['pk']+'">Si</label><input type="radio" name="consulta_respuesta_sino_'+str(pregunta.id)+'" id="'+kwargs['pk']+'"value="Si" class="icheck need_justification">'
-                    campo += '<label for="'+kwargs['pk']+'">No</label><input type="radio" name="consulta_respuesta_sino_'+str(pregunta.id)+'" id="'+kwargs['pk']+'"value="No" class="icheck">'
-                    campo += '<div id="div_justificar_'+kwargs['pk']+'" style="display:none;"><label>Indique con que instrumento legal en vigencia se relaciona su aporte</label>'
-                    campo += '<textarea class="form-control" id="respuesta_justificar_'+kwargs['pk']+'" name="consulta_respuesta_justificar_'+str(pregunta.id)+'">'
-                    campo += '</textarea></div>'
-            valores[pregunta.id] = {'label':label,'field':campo}
-            kwargs['preguntas'] = valores
-        return super(ParticipacionSimpleCreate, self).get_context_data(**kwargs)
-    
-    def post(self,request,pk,id_objetivo):
-        """!
-        Metodo que sobreescribe el post del formulario
-    
-        @author Rodrigo Boet (rboet at cenditel.gob.ve)
-        @copyright GNU/GPLv2
-        @date 20-03-2017
-        @param self <b>{object}</b> Objeto que instancia la clase
-        @param request <b>{object}</b> Objeto que instancia la petición
-        @param pk <b>{int}</b> Recibe el id de la consulta
-        @param id_ente <b>{int}</b> Recibe el id del ente
-        @return Retorna los datos de contexto
-        """
-        data = dict(request.POST)
-        del data['csrfmiddlewaretoken']
-        if self.request.is_ajax():
-            for key in data.keys():
-                parent_id = key.split("_")[-1]
-                if 'sino' in key:
-                    value = True if data[key][0] == 'Si' else False
-                    justify_id = 'consulta_respuesta_justificar_'+str(parent_id)
-                    self.crear_respuesta_sino(parent_id,value,id_objetivo,self.request.user.id)
-                    if(not value and justify_id in data.keys()):
-                        respuesta = data[justify_id][0]
-                        self.crear_respuesta_abierta(parent_id,respuesta,id_objetivo,self.request.user.id,True)
-                elif 'radio' in key or 'check' in key:
-                    for value in data[key]:
-                        self.crear_respuesta_opciones(value,id_objetivo,self.request.user.id)
-            return JsonResponse({"code":True})
-        return redirect(reverse_lazy('participacion_busqueda',kwargs={'pk':pk}))
-    
-    def crear_respuesta_sino(self,parent_id,value,id_objetivo,user_id):
-        """!
-        Metodo para crear una respuesta de si/no
-    
-        @author Rodrigo Boet (rboet at cenditel.gob.ve)
-        @copyright GNU/GPLv2
-        @date 27-03-2017
-        @param self <b>{object}</b> Objeto que instancia la clase
-        @param parent_id <b>{int}</b> Recibe el número del id del padre
-        @param value <b>{bool}</b> Recibe el valor de la respuesta
-        @param id_objetivo <b>{int}</b> Recibe el id del objetivo
-        @param user_id <b>{int}</b> Recibe el id del user
-        @return Retorna los datos de contexto
-        """
-        user = User.objects.get(id=user_id)
-        parent = Pregunta.objects.get(pk=parent_id)
-        respuesta = RespuestaSino()
-        respuesta.pregunta = parent
-        respuesta.respuesta = value
-        respuesta.user = user
-        respuesta.save()
-        
-    def crear_respuesta_opciones(self,parent_id,id_objetivo,user_id):
-        """!
-        Metodo para crear una respuesta de selección simple y múltiple
+        Metodo para cargar/obtener valores en el contexto de la vista
     
         @author Rodrigo Boet (rboet at cenditel.gob.ve)
         @copyright GNU/GPLv2
         @date 28-03-2017
         @param self <b>{object}</b> Objeto que instancia la clase
-        @param parent_id <b>{int}</b> Recibe el número del id del padre
-        @param id_objetivo <b>{int}</b> Recibe el id del objetivo
-        @param user_id <b>{int}</b> Recibe el id del user
+        @param kwargs <b>{object}</b> Objeto que contiene los datos de contexto
         @return Retorna los datos de contexto
         """
-        user = User.objects.get(id=user_id)
-        parent = Opcion.objects.get(pk=parent_id)
-        respuesta = RespuestaOpciones()
-        respuesta.opcion = parent
-        respuesta.user = user
-        respuesta.save()
+        context = super(MiParticipacion, self).get_context_data(**kwargs)
+        context['object_list'] = cargar_consultas()
+        
+        ## Implementación del paginador
+        paginator = Paginator(context['object_list'], self.paginate_by)
+        page = self.request.GET.get('page')
+        try:
+            context['page_obj'] = paginator.page(page)
+            context['object_list'] = context['page_obj'].object_list
+        except PageNotAnInteger:
+            context['page_obj'] = paginator.page(1)
+            context['object_list'] = context['page_obj'].object_list
+        except EmptyPage:
+            context['page_obj'] = paginator.page(paginator.num_pages)
+            context['object_list'] = context['page_obj'].object_list
+        return context
+    

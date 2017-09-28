@@ -37,7 +37,7 @@
                     <div class="col s7">
                         {{form.captcha}}
                     </div>
-                    <a class="col s2" onclick="refresh_captcha(this);" style="cursor: pointer">
+                    <a class="col s2 text-blue lighten-1" onclick="refresh_captcha(this);" style="cursor: pointer">
                         <i class="small material-icons">cached</i>
                     </a>
                     {% include 'base.forms.errors.html' with form_errors=form.captcha.errors col_title_error='col s2' col_msg_error='col s10' %}
@@ -45,7 +45,7 @@
             </div>
         </div>
         <div>
-            <button type="submit" class="btn waves-effect">Entrar</button>
+            <button type="submit" class="btn waves-effect blue lighten-1">Entrar</button>
         </div>
         </div>
     </form>
