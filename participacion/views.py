@@ -275,7 +275,7 @@ class MiParticipacion(LoginRequiredMixin,TemplateView):
     @version 1.0.0
     """
     template_name = "mi_participacion.html"
-    paginate_by = 1
+    paginate_by = 5
     
     def get_context_data(self, **kwargs):
         """!
@@ -283,13 +283,15 @@ class MiParticipacion(LoginRequiredMixin,TemplateView):
     
         @author Rodrigo Boet (rboet at cenditel.gob.ve)
         @copyright GNU/GPLv2
-        @date 28-03-2017
+        @date 28-09-2017
         @param self <b>{object}</b> Objeto que instancia la clase
         @param kwargs <b>{object}</b> Objeto que contiene los datos de contexto
         @return Retorna los datos de contexto
         """
         context = super(MiParticipacion, self).get_context_data(**kwargs)
-        context['object_list'] = cargar_consultas()
+        consultas = cargar_consultas()
+                
+        context['object_list'] = self.tomar_participaciones(self.request.user.id,consultas)
         
         ## Implementación del paginador
         paginator = Paginator(context['object_list'], self.paginate_by)
@@ -305,3 +307,55 @@ class MiParticipacion(LoginRequiredMixin,TemplateView):
             context['object_list'] = context['page_obj'].object_list
         return context
     
+    def tomar_participaciones(self,user,consultas):
+        """!
+        Metodo para obtener las participaciones del usuario
+    
+        @author Rodrigo Boet (rboet at cenditel.gob.ve)
+        @copyright GNU/GPLv2
+        @date 03-10-2017
+        @param self <b>{object}</b> Objeto que instancia la clase
+        @param user <b>{int}</b> Recibe el id del usuario
+        @param consultas <b>{dict}</b> Recibe un diccionario con las consultas disponibles
+        @return Retorna los datos de contexto
+        """
+        consulta_user = []
+        for consulta in consultas:
+            participo = False
+            preguntas = []
+            for pregunta in consulta['preguntas']:
+                preguntas_data = {}
+                if(pregunta['tipo_pregunta']['tipo']=="Si/No"):
+                    respuesta_sino = RespuestaSino.objects.filter(pregunta=int(pregunta['id']),user_id=user).all()
+                    if respuesta_sino:
+                        participo = True
+                        preguntas_data['texto_pregunta'] = pregunta['texto_pregunta']
+                        preguntas_data['tipo_pregunta'] = pregunta['tipo_pregunta']['tipo']
+                        preguntas_data['respuestas'] = [resp.respuesta for resp in respuesta_sino]
+                elif(pregunta['tipo_pregunta']['tipo']=="Selección Simple" or pregunta['tipo_pregunta']['tipo']=="Selección Múltiple"):
+                    respuesta_opciones = RespuestaOpciones.objects.filter(pregunta=int(pregunta['id']),user_id=user).all()
+                    if respuesta_opciones:
+                        participo = True    
+                        preguntas_data['texto_pregunta'] = pregunta['texto_pregunta']
+                        preguntas_data['tipo_pregunta'] = pregunta['tipo_pregunta']['tipo']
+                        respuestas = []
+                        for resp in respuesta_opciones:
+                            for opcion in pregunta['opciones']:
+                                if(int(opcion['id'])==resp.opcion):
+                                    respuestas.append(opcion['texto_opcion'])
+                        preguntas_data['respuestas'] = respuestas
+                elif(pregunta['tipo_pregunta']['tipo']=="Abierta"):
+                    respuesta_abierta = RespuestaAbierta.objects.filter(pregunta=int(pregunta['id']),user_id=user).all()
+                    if respuesta_abierta:
+                        participo = True
+                        preguntas_data['texto_pregunta'] = pregunta['texto_pregunta']
+                        preguntas_data['tipo_pregunta'] = pregunta['tipo_pregunta']['tipo']
+                        preguntas_data['respuestas'] = [resp.texto_respuesta for resp in respuesta_abierta]
+                if(participo):
+                    preguntas.append(preguntas_data)        
+            if(participo):
+                consulta_obj = {}
+                consulta_obj['nombre_consulta'] = consulta['nombre_consulta']
+                consulta_obj['preguntas'] = preguntas
+                consulta_user.append(consulta_obj)
+        return consulta_user

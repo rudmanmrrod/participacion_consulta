@@ -32,13 +32,13 @@ class CedulaWidget(MultiWidget):
         widgets = (
             Select(
                 attrs={
-                    'class': 'select2 form-control', 'data-toggle': 'tooltip',
+                    'class': 'col s2', 'data-toggle': 'tooltip',
                     'title': "Seleccione la nacionalidad"
                 }, choices=SHORT_NACIONALIDAD
             ),
             TextInput(
                 attrs={
-                    'class': 'form-control text-center', 'placeholder': '00000000', 'data-mask': '00000000',
+                    'class': 'col s10', 'placeholder': '00000000', 'data-mask': '00000000',
                     'data-toggle': 'tooltip', 'maxlength': '8', 'size':'7', 'data-rule-required': 'true',
                     'title': "Indique el número de Cédula de Identidad"
                 }

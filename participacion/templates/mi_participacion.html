@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block title %}Mi participación{% endblock %}
 {% block content %}
-    <h4 class="center">Mis Participación</h4><hr>
+    <h4 class="center">Mis Participaciones</h4><hr>
     {% for item in object_list %}
         <div class="card">
             <div class="card-content">
@@ -10,7 +10,12 @@
             </div>
             <ol>
                 {% for preguntas in item.preguntas %}
-                    <li>{{preguntas.texto_pregunta}}</li>
+                    <li><b>{{preguntas.texto_pregunta}}</b></li>
+                    <ul>
+                    {% for respuestas in preguntas.respuestas %}
+                        <li>{% if respuestas == True %}Si{% elif respuestas == False %}No{% else %}{{respuestas}}{% endif%}</li>
+                    {% endfor %}
+                    </ul>
                 {% endfor %}
             </ol>
             <div class="card-action">
