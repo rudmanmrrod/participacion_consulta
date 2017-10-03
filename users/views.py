@@ -101,7 +101,6 @@ class RegisterView(SuccessMessageMixin,FormView):
     form_class = UserRegisterForm
     success_url = reverse_lazy('login')
     success_message = "Se registró con éxito"
-    model = User
 
     def form_valid(self, form, **kwargs):
         """!

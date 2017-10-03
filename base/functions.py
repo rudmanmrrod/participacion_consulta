@@ -19,25 +19,6 @@ from participacion.models import RespuestaAbierta,RespuestaOpciones, RespuestaSi
 from participacion_consulta.settings import API_BASE_URL,API_URL, CONSULTA_SECRET_TOKEN
 import requests
 
-def cargar_tipo_pregunta():
-    """!
-    Función que permite cargar los tipos de preguntas que existen
-
-    @author Rodrigo Boet (rboet at cenditel.gob.ve)
-    @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
-    @date 15-02-2017
-    @return Devuelve una tupla con los tipos de pregunta
-    """
-
-    lista = ('', 'Seleccione...'),
-
-    try:
-        for tipo_pregunta in TipoPregunta.objects.all():
-            lista += (tipo_pregunta.id, tipo_pregunta.tipo),
-    except Exception as e:
-        pass
-
-    return lista
 
 def cargar_entidad():
     """!
@@ -52,50 +33,57 @@ def cargar_entidad():
     lista = ('', 'Seleccione...'),
 
     try:
-        for entidad in Entidad.objects.all():
-            lista += (entidad.codigo, entidad.nombre),
+        entidades = requests.get(API_URL+'entidad/')
+        for entidad in entidades.json():
+            lista += (entidad['codigo'], entidad['nombre']),
     except Exception as e:
         pass
 
     return lista
 
 
-def cargar_municipios():
+def cargar_municipios(entidad = 0):
     """!
     Función que permite cargar todas los municipios
 
     @author Rodrigo Boet (rboet at cenditel.gob.ve)
     @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
     @date 20-04-2017
+    @param entidad <b>{int}</b> Recibe el id del padre
     @return Devuelve una tupla con los municipios
     """
 
     lista = ('', 'Seleccione...'),
 
     try:
-        for municipio in Municipio.objects.all():
-            lista += (municipio.codigo, municipio.nombre),
+        url = API_URL+'municipio/' if entidad ==0 else API_URL+'municipio/?estado='+str(entidad)
+        municipios = requests.get(url)
+        for municipio in municipios.json():
+            lista += (municipio['codigo'], municipio['nombre']),
     except Exception as e:
         pass
 
     return lista
 
 
-def cargar_parroquias():
+def cargar_parroquias(municipio = 0):
     """!
     Función que permite cargar todas las parroquias
 
     @author Rodrigo Boet (rboet at cenditel.gob.ve)
     @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
     @date 20-04-2017
+    @param municipio <b>{int}</b> Recibe el id del padre
     @return Devuelve una tupla con las parroquias
     """
 
     lista = ('', 'Seleccione...'),
 
     try:
-        for parroquia in Parroquia.objects.all():
-            lista += (parroquia.codigo, parroquia.nombre),
+        url = API_URL+'parroquia/' if municipio ==0 else API_URL+'parroquia/?municipio='+str(municipio)
+        parroquias = requests.get(url)
+        for parroquia in parroquias.json():
+            lista += (parroquia['codigo'], parroquia['nombre']),
     except Exception as e:
         pass
 

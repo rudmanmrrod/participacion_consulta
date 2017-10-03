@@ -123,15 +123,12 @@ class UserRegisterForm(forms.ModelForm):
         # Si se ha seleccionado un estado establece el listado de municipios y elimina el atributo disable
         if 'estado' in self.data and self.data['estado']:
             self.fields['municipio'].widget.attrs.pop('disabled')
-            self.fields['municipio'].queryset=Municipio.objects.filter(entidad=self.data['estado'])
+            self.fields['municipio'].queryset = cargar_municipios(self.data['estado'])
 
             # Si se ha seleccionado un municipio establece el listado de parroquias y elimina el atributo disable
             if 'municipio' in self.data and self.data['municipio']:
                 self.fields['parroquia'].widget.attrs.pop('disabled')
-                self.fields['parroquia'].queryset=Parroquia.objects.filter(municipio=self.data['municipio'])
-        
-        if 'participacion' in self.data and self.data['participacion']=='CO':
-            self.fields['colectivo'].widget.attrs.pop('readonly')
+                self.fields['parroquia'].queryset = cargar_parroquias(self.data['municipio'])
         
         self.fields['estado'].choices = cargar_entidad()
         self.fields['municipio'].choices = cargar_municipios()
@@ -177,19 +174,14 @@ class UserRegisterForm(forms.ModelForm):
     ## cedula
     cedula = CedulaField()
     
-    ## sector
-    sector = forms.ChoiceField(
-        widget=forms.Select(attrs={'class': 'form-control input-md','onchange':'mostrar_sector(this.value);'}),
-        label="Sector",choices=(('','Seleccione...'),)+SECTORES
-        )
     
     ## estado
     estado = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control input-md',
-        'onchange': "actualizar_combo(this.value,'base','Municipio','entidad','codigo','nombre','id_municipio')"}))
+        'onchange': "get_municipio(this.value)"}))
     
     ## municipio
     municipio = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control input-md','disabled':'disabled',
-        'onchange': "actualizar_combo(this.value,'base','Parroquia','municipio','codigo','nombre','id_parroquia')"}))
+        'onchange': "get_parroquia(this.value)"}))
     
     ## parroquia
     parroquia = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control input-md','disabled':'disabled'}))
@@ -241,41 +233,7 @@ class UserRegisterForm(forms.ModelForm):
         email = self.cleaned_data['email']
         if(validate_email(email)):
             raise forms.ValidationError("El correo ingresado ya existe")
-        return email
-    
-    
-    def clean_sector_trabajador(self):
-        """!
-        Método que valida el sector trabajador
-    
-        @author Rodrigo Boet (rboet at cenditel.gob.ve)
-        @copyright GNU/GPLv2
-        @date 24-05-2017
-        @param self <b>{object}</b> Objeto que instancia la clase
-        @return Retorna el campo con la validacion
-        """
-        sector = self.cleaned_data['sector']
-        sector_trabajador = self.cleaned_data['sector_trabajador']
-        if(sector=='TR' and sector_trabajador==''):
-            raise forms.ValidationError("Debe ingresar el sector dónde trabaja")
-        return sector_trabajador
-    
-    def clean_sector_estudiante(self):
-        """!
-        Método que valida el sector estudiante
-    
-        @author Rodrigo Boet (rboet at cenditel.gob.ve)
-        @copyright GNU/GPLv2
-        @date 24-05-2017
-        @param self <b>{object}</b> Objeto que instancia la clase
-        @return Retorna el campo con la validacion
-        """
-        sector = self.cleaned_data['sector']
-        sector_estudiante = self.cleaned_data['sector_estudiante']
-        if(sector=='ES' and sector_estudiante==''):
-            raise forms.ValidationError("Debe ingresar el sector dónde estudia")
-        return sector_estudiante
-        
+        return email        
         
     class Meta:
         model = User

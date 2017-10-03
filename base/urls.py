@@ -21,5 +21,6 @@ urlpatterns = [
 
 ## Ajax
 urlpatterns +=[
-    url(r'^ajax/actualizar-combo/?$', actualizar_combo, name='actualizar_combo'),
+    url(r'^ajax/municipio/?$', buscar_municipio, name='buscar_municipio'),
+    url(r'^ajax/parroquia/?$', buscar_parroquia, name='buscar_parroquia'),
 ]
