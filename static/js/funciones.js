@@ -234,6 +234,12 @@ function json2html_select(data) {
     return html;
 }
 
+/**
+ * @brief Función para mostrar la justificación de las
+ * respuestas de Si/No
+ * @param element Recibe el elemento
+ * @param show Recibe si se motrará o se ocultará
+ */
 function show_justification(element,show) {
     var id = $(element).attr("name").split("_");
     id = id[id.length-1];
