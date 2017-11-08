@@ -233,3 +233,14 @@ function json2html_select(data) {
     });
     return html;
 }
+
+function show_justification(element,show) {
+    var id = $(element).attr("name").split("_");
+    id = id[id.length-1];
+    if (show) {
+        $('#div_justificar_'+id).show();
+    }
+    else{
+        $('#div_justificar_'+id).hide();
+    }
+}
