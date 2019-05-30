@@ -176,14 +176,14 @@ function get_municipio(valor) {
     else{
         var url = URL_BUSCAR_MUNICIPIO;
         $('#id_municipio').attr('disabled',true);
-        $('#id_municipio').material_select();
+        $('#id_municipio').formSelect();
     }
     $.get(url)
         .done(function(response){
             $('#id_municipio').removeAttr('disabled');
             var html = json2html_select(response);
             $('#id_municipio').html(html);
-            $('#id_municipio').material_select();
+            $('#id_municipio').formSelect();
         })
         .fail(function(response){
             MaterialDialog.alert("Ocurrió un error inesperado",{
@@ -204,14 +204,14 @@ function get_parroquia(valor) {
     else{
         var url = URL_BUSCAR_PARROQUIA;
         $('#id_parroquia').attr('disabled',true);
-        $('#id_parroquia').material_select();
+        $('#id_parroquia').formSelect();
     }
     $.get(url)
         .done(function(response){
             $('#id_parroquia').removeAttr('disabled');
             var html = json2html_select(response);
             $('#id_parroquia').html(html);
-            $('#id_parroquia').material_select();
+            $('#id_parroquia').formSelect();
         })
         .fail(function(response){
             MaterialDialog.alert("Ocurrió un error inesperado",{
