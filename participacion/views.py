@@ -12,18 +12,17 @@ Copyleft (@) 2017 CENDITEL nodo Mérida - https://planificacion.cenditel.gob.ve/
 # (CENDITEL) nodo Mérida - Venezuela</a>
 # @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
 # @version 1.0
-import json
-from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse_lazy
-from django.http import JsonResponse
-from django.views.generic import FormView, TemplateView
+import json, requests
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.url import reverse_lazy
+from django.views.generic import FormView, TemplateView
 from base.functions import cargar_consultas, cargar_consulta_id, validar_participacion_general
-from .models import RespuestaAbierta, RespuestaOpciones, RespuestaSino
-import requests
+from .models import RespuestaAbierta, RespuestaOpciones, RespuestaSino 
 
 class ParticipacionIndex(LoginRequiredMixin,TemplateView):
     """!

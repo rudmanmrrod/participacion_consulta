@@ -12,13 +12,13 @@ Copyleft (@) 2017 CENDITEL nodo Mérida - https://planificacion.cenditel.gob.ve/
 # (CENDITEL) nodo Mérida - Venezuela</a>
 # @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
 # @version 1.0
-from django.conf.urls import url
+from django.urls import path
 from django.contrib.auth.views import *
 from .views import *
 
 urlpatterns = [
-    url(r'^login$', LoginView.as_view(), name = "login"),
-    url(r'^logout$', LogoutView.as_view(), name = "logout"),
-    url(r'^register$', RegisterView.as_view(), name = "register"),
+    path('login', LoginView.as_view(), name = "login"),
+    path('logout', LogoutView.as_view(), name = "logout"),
+    path('register', RegisterView.as_view(), name = "register"),
     #url(r'^update/(?P<pk>\d+)$', PerfilUpdate.as_view(), name = "update"),
 ]

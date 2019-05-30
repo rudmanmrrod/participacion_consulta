@@ -12,15 +12,15 @@ Copyleft (@) 2017 CENDITEL nodo Mérida - https://planificacion.cenditel.gob.ve/
 # (CENDITEL) nodo Mérida - Venezuela</a>
 # @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
 # @version 1.0
-from django.conf.urls import url
+from django.urls import path
 from .views import *
 
 urlpatterns = [
-    url(r'^$', Inicio.as_view(), name = "inicio"),
+    path('', Inicio.as_view(), name = "inicio"),
 ]
 
 ## Ajax
 urlpatterns +=[
-    url(r'^ajax/municipio/?$', buscar_municipio, name='buscar_municipio'),
-    url(r'^ajax/parroquia/?$', buscar_parroquia, name='buscar_parroquia'),
+    path('ajax/municipio/', buscar_municipio, name='buscar_municipio'),
+    path('ajax/parroquia/', buscar_parroquia, name='buscar_parroquia'),
 ]

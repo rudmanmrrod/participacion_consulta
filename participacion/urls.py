@@ -12,17 +12,17 @@ Copyleft (@) 2017 CENDITEL nodo Mérida - https://planificacion.cenditel.gob.ve/
 # (CENDITEL) nodo Mérida - Venezuela</a>
 # @copyright <a href='https://www.gnu.org/licenses/gpl-3.0.en.html'>GNU Public License versión 3 (GPLv3)</a>
 # @version 1.0
-from django.conf.urls import url
+from django.urls import path
 from .views import *
 
 urlpatterns = [
-    url(r'^$', ParticipacionIndex.as_view(), name = "participacion_index"),
-    url(r'^crear/(?P<pk>\d+)$', ParticipacionCreate.as_view(), name = "participacion_create"),
-    url(r'^crear/$', ParticipacionCreate.as_view(), name = "participacion_create_nid"),
-    url(r'^mi-participacion$', MiParticipacion.as_view(), name = "mi_participacion"),
+    path('', ParticipacionIndex.as_view(), name = "participacion_index"),
+    path('crear/<int:pk>', ParticipacionCreate.as_view(), name = "participacion_create"),
+    path('crear/', ParticipacionCreate.as_view(), name = "participacion_create_nid"),
+    path('mi-participacion', MiParticipacion.as_view(), name = "mi_participacion"),
 ]
 
 ## Ajax
 urlpatterns +=[
-    url(r'^participacion/ajax/validar-participacion$', validar_participacion, name = "participacion_validar"),
+    path('participacion/ajax/validar-participacion', validar_participacion, name = "participacion_validar"),
 ]
