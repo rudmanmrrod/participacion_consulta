@@ -160,7 +160,7 @@ API_BASE_URL = 'http://localhost:8003/'
 API_URL = API_BASE_URL+'api/'
 
 ## Token secreto de la consulta
-CONSULTA_SECRET_TOKEN = ['uA4xFCDUEvBp:Mw:1ddL7M:Fus-DX_oZLNqcvHNwZEAMlJLwHU','UcRqZXNb1uLt:Mw:1dkwbl:IDBGapd8_ZMfBZiKOAGhxnhilKQ']
+CONSULTA_SECRET_TOKEN = ['BhQzJgmVOqOc:MQ:1hWOYS:BMl_BGyexHntaNn-1lK4QlVxTcg']
 
 ## Se almacenan los mensajes en sesion
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
