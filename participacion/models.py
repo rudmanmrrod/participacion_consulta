@@ -33,7 +33,7 @@ class RespuestaSino(models.Model):
     respuesta = models.BooleanField()
     
     ## Relación con el user
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     
     ## Relación con la consulta
     consulta = models.IntegerField()
@@ -66,7 +66,7 @@ class RespuestaOpciones(models.Model):
     opcion = models.IntegerField()
     
     ## Relación con el user
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     
     ## Relación con la consulta
     consulta = models.IntegerField()
@@ -105,7 +105,7 @@ class RespuestaAbierta(models.Model):
     es_justificacion = models.BooleanField(default=False)
     
     ## Relación con el user
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     
     def __str__(self):
         """!

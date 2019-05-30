@@ -17,7 +17,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.url import reverse_lazy
 from django.views.generic import FormView, TemplateView
